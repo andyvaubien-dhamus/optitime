@@ -1,0 +1,47 @@
+{
+    "xp": 1400,
+    "level": 1,
+    "unlocked": [
+        "Classique",
+        "Pixel",
+        "Animaux"
+    ],
+    "achievements_unlocked": [
+        "welcome",
+        "hours_50",
+        "pauses_10",
+        "streak_3",
+        "days_10"
+    ],
+    "theme_matrix_unlocked": false,
+    "current": {
+        "skin": "Animaux",
+        "pack": "Sto\u00efcisme"
+    },
+    "counters": {
+        "days_logged": 18,
+        "pauses_clicked": 105,
+        "total_hours": 58.66378261,
+        "streak_current": 2
+    },
+    "vitality_xp": 0,
+    "inventory": {
+        "joker_freeze": 0,
+        "joker_coffe": 0,
+        "machine_time": 0,
+        "streak_fixer": 4
+    },
+    "vitality_ener": -25,
+    "active_contract": {
+        "days_done": 0,
+        "target_days": 3,
+        "pauses_today": 1,
+        "last_date": "2026-09-22"
+    },
+    "last_active_day": "2026-09-30",
+    "daily_pauses_count": 1,
+    "active_shields": 3,
+    "temporal_slot": null,
+    "theme_system_s_unlocked": false,
+    "theme_prime_enabled": true
+}

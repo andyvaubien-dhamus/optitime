@@ -1,0 +1,21 @@
+{
+    "objectif_h": 7.0,
+    "franchise_min": 30,
+    "activites": [
+        "Administration",
+        "Production",
+        "R\u00e9union",
+        "Formation",
+        "Pause D\u00e9j",
+        "Autre"
+    ],
+    "dashboard_widgets": [
+        "kpi_total",
+        "kpi_solde",
+        "kpi_banque",
+        "kpi_pause",
+        "chart_evol",
+        "chart_repart",
+        "mail_rh"
+    ]
+}
