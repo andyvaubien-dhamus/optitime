@@ -74,15 +74,16 @@ def quit_app(e):
 
     # En-tête dynamique Sidebar : logo.png > icon.png + texte > texte seul
     logo_path = os.path.join(assets_folder, "logo.png")
+    
     if os.path.exists(logo_path):
         header_widget = ft.Image(
-            src=logo_path,
+            src="logo.png", # ✅ Modifié pour le Web : on n'utilise que le nom du fichier
             height=45,
             fit=ft.ImageFit.CONTAIN
         )
     elif os.path.exists(icon_png_path):
         header_widget = ft.Row([
-            ft.Image(src=icon_png_path, width=32, height=32, fit=ft.ImageFit.CONTAIN),
+            ft.Image(src="icon.png", width=32, height=32, fit=ft.ImageFit.CONTAIN), # ✅ Modifié pour le Web
             ft.Text("OptiTime", size=20, weight=ft.FontWeight.BOLD)
         ], alignment=ft.MainAxisAlignment.CENTER)
     else:
