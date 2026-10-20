@@ -11,23 +11,26 @@ from modules.views import AppViews
 def main(page: ft.Page):
     page.title = "OptiTime Desktop"
     page.theme_mode = ft.ThemeMode.LIGHT
-if hasattr(page, 'window'):
-    page.window.width = 1180
-    page.window.height = 840
+    
+    # Les dimensions sont protégées ici, DANS la fonction
+    if hasattr(page, 'window'):
+        page.window.width = 1180
+        page.window.height = 840
+        
     page.padding = 0
 
-    # --- ENREGISTREMENT DU DOSSIER ASSETS DANS FLET ---
+    # --- ENREGISTREMENT DU DOSSIER ASSETS ---
     assets_folder = get_resource_path("assets")
     page.assets_dir = assets_folder
 
-    # Définition de l'icône de la fenêtre sous Windows
+    # Et ici pour l'icône
     icon_ico_path = os.path.join(assets_folder, "icon.ico")
     icon_png_path = os.path.join(assets_folder, "icon.png")
-if hasattr(page, 'window'):
-    if os.path.exists(icon_ico_path):
-        page.window.icon = icon_ico_path
-    elif os.path.exists(icon_png_path):
-        page.window.icon = icon_png_path
+    if hasattr(page, 'window'):
+        if os.path.exists(icon_ico_path):
+            page.window.icon = icon_ico_path
+        elif os.path.exists(icon_png_path):
+            page.window.icon = icon_png_path
 
     # Initialisation SQLite & Migration
     init_db()
