@@ -58,8 +58,8 @@ if hasattr(page, 'window'):
         expand=True
     )
 
-    # Fonction de sortie propre
-    def quit_app(e):
+# Fonction de sortie propre
+def quit_app(e):
     save_game_data(app_state["game"])
     if hasattr(page, 'window'):
         page.window.close()
