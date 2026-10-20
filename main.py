@@ -121,4 +121,12 @@ def main(page: ft.Page):
     threading.Thread(target=clock_thread, daemon=True).start()
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    port_flet = int(os.environ.get("PORT", 8080))
+    # On passe assets_dir directement au moteur pour que FastAPI puisse servir les images
+    ft.app(
+        target=main, 
+        view=ft.WEB_BROWSER, 
+        host="0.0.0.0", 
+        port=port_flet,
+        assets_dir="assets" 
+    )
