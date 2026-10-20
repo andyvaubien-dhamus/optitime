@@ -122,11 +122,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     port_flet = int(os.environ.get("PORT", 8080))
-    # On passe assets_dir directement au moteur pour que FastAPI puisse servir les images
-    ft.app(
-        target=main, 
-        view=ft.WEB_BROWSER, 
-        host="0.0.0.0", 
-        port=port_flet,
-        assets_dir="assets" 
-    )
+    ft.app(target=main, view=ft.AppView.WEB_BROWSER, host="0.0.0.0", port=port_flet, assets_dir="assets")
