@@ -11,6 +11,7 @@ from modules.views import AppViews
 def main(page: ft.Page):
     page.title = "OptiTime Desktop"
     page.theme_mode = ft.ThemeMode.LIGHT
+if hasattr(page, 'window'):
     page.window.width = 1180
     page.window.height = 840
     page.padding = 0
@@ -22,6 +23,7 @@ def main(page: ft.Page):
     # Définition de l'icône de la fenêtre sous Windows
     icon_ico_path = os.path.join(assets_folder, "icon.ico")
     icon_png_path = os.path.join(assets_folder, "icon.png")
+if hasattr(page, 'window'):
     if os.path.exists(icon_ico_path):
         page.window.icon = icon_ico_path
     elif os.path.exists(icon_png_path):
@@ -58,11 +60,14 @@ def main(page: ft.Page):
 
     # Fonction de sortie propre
     def quit_app(e):
-        save_game_data(app_state["game"])
-        try:
-            page.window.close()
-        except Exception:
-            sys.exit(0)
+    save_game_data(app_state["game"])
+    if hasattr(page, 'window'):
+        page.window.close()
+    else:
+        # Sur le Web, on se contente d'afficher un message
+        page.snack_bar = ft.SnackBar(ft.Text("Sauvegarde réussie. Vous pouvez fermer cet onglet."))
+        page.snack_bar.open = True
+        page.update()
 
     # En-tête dynamique Sidebar : logo.png > icon.png + texte > texte seul
     logo_path = os.path.join(assets_folder, "logo.png")
@@ -122,4 +127,11 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     port_flet = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, view=ft.AppView.WEB_BROWSER, host="0.0.0.0", port=port_flet, assets_dir="assets")
+    # On passe assets_dir directement au moteur pour que FastAPI puisse servir les images
+    ft.app(
+        target=main, 
+        view=ft.WEB_BROWSER, 
+        host="0.0.0.0", 
+        port=port_flet,
+        assets_dir="assets" 
+    )
