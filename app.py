@@ -112,11 +112,9 @@ from modules.database import init_db, load_data_db, save_entry_db, update_db_fro
 from modules.utils import (
     load_config, save_config, load_game_data, save_game_data, 
     check_achievements, load_memo, save_memo, clear_memo,
-    get_optigotchi_status, check_and_import_csv, 
-    sync_xp_from_achievements, calculate_duration
+    get_optigotchi_status, sync_xp_from_achievements, calculate_duration
 )
 
-check_and_import_csv()
 if 'db_init' not in st.session_state: 
     init_db()
     st.session_state.db_init = True
