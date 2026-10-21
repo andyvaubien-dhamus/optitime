@@ -2,13 +2,20 @@ import os
 import sys
 from pathlib import Path
 
-# --- DÉTECTION DU DOSSIER D'EXÉCUTION (Compatible PyInstaller / Portable) ---
-if getattr(sys, 'frozen', False):
-    APP_ROOT = Path(sys.executable).parent
+# --- DÉTECTION DU DOSSIER D'EXÉCUTION ET PERSISTANCE WEB ---
+if os.environ.get("PORT") or os.environ.get("RAILWAY_ENVIRONMENT"):
+    # Sur Railway (Web), on utilise le volume persistant
+    APP_ROOT = Path("/app")
+    APP_DATA_DIR = Path("/app/data")
 else:
-    APP_ROOT = Path(__file__).resolve().parent.parent
+    # Mode Local / Bureau
+    if getattr(sys, 'frozen', False):
+        APP_ROOT = Path(sys.executable).parent
+    else:
+        APP_ROOT = Path(__file__).resolve().parent.parent
+    APP_DATA_DIR = APP_ROOT / "OptiTimeData"
 
-APP_DATA_DIR = APP_ROOT / "OptiTimeData"
+# Création du dossier s'il n'existe pas
 APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # --- CHEMINS DE PERSISTANCE ---
