@@ -8,6 +8,19 @@ from .constants import (
     LISTE_TROPHEES, SKINS_DB
 )
 
+# --- ADAPTATION WEB (RAILWAY) POUR LA SAUVEGARDE ---
+def get_persistent_path(filepath):
+    """
+    Vérifie si on est sur Railway. Si oui, on force le chemin vers le dossier /app/data
+    pour garantir que le fichier survit aux redémarrages du serveur.
+    Sinon, on retourne le filepath d'origine.
+    """
+    if os.environ.get("PORT") or os.environ.get("RAILWAY_ENVIRONMENT"):
+        os.makedirs("/app/data", exist_ok=True)
+        filename = os.path.basename(filepath)
+        return f"/app/data/{filename}"
+    return filepath
+
 def get_resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -40,16 +53,21 @@ def calculate_duration(t_start, t_end, pause_min, franchise_min=0):
     effective_minutes = duration_minutes - max(0, pause_min - franchise_min)
     return max(0.0, round(effective_minutes / 60.0, 2))
 
+# --- GESTION CONFIGURATION ---
 def load_config():
-    if not os.path.exists(CONFIG_FILE): return DEFAULT_CONFIG.copy()
+    actual_path = get_persistent_path(CONFIG_FILE)
+    if not os.path.exists(actual_path): return DEFAULT_CONFIG.copy()
     try:
-        with open(CONFIG_FILE, "r", encoding="utf-8") as f: return json.load(f)
+        with open(actual_path, "r", encoding="utf-8") as f: return json.load(f)
     except: return DEFAULT_CONFIG.copy()
 
 def save_config(config):
-    with open(CONFIG_FILE, "w", encoding="utf-8") as f: json.dump(config, f, indent=4)
+    actual_path = get_persistent_path(CONFIG_FILE)
+    with open(actual_path, "w", encoding="utf-8") as f: json.dump(config, f, indent=4)
 
+# --- GESTION JEU (OPTIGOTCHI) ---
 def load_game_data():
+    actual_path = get_persistent_path(GAME_FILE)
     default_game = {
         "xp": 0, "vitality_ener": 0, "level": 1, "unlocked": ["Classique"],
         "achievements_unlocked": [],
@@ -60,9 +78,9 @@ def load_game_data():
         "last_active_day": None,
         "counters": {"days_logged": 0, "pauses_clicked": 0, "total_hours": 0.0, "streak_current": 0}
     }
-    if not os.path.exists(GAME_FILE): return default_game
+    if not os.path.exists(actual_path): return default_game
     try:
-        with open(GAME_FILE, "r", encoding="utf-8") as f:
+        with open(actual_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             for k, v in default_game.items():
                 if k not in data: data[k] = v
@@ -72,7 +90,8 @@ def load_game_data():
     except: return default_game
 
 def save_game_data(data):
-    with open(GAME_FILE, "w", encoding="utf-8") as f: json.dump(data, f, indent=4)
+    actual_path = get_persistent_path(GAME_FILE)
+    with open(actual_path, "w", encoding="utf-8") as f: json.dump(data, f, indent=4)
 
 def update_streak_logic(game_data):
     today = datetime.now().date()
@@ -155,13 +174,17 @@ def get_optigotchi_status(total_h, pause_m, objectif, skin_name, game_data=None)
     elif ratio >= 0.5: return skin_assets["happy"], "En bonne voie !", "#DBEAFE", "#3B82F6", "focus"
     else: return skin_assets["sleep"], "En attente...", "#F3F4F6", "#9CA3AF", "sleep"
 
+# --- GESTION MEMO ---
 def load_memo():
-    if os.path.exists(MEMO_FILE):
-        with open(MEMO_FILE, "r", encoding="utf-8") as f: return f.read()
+    actual_path = get_persistent_path(MEMO_FILE)
+    if os.path.exists(actual_path):
+        with open(actual_path, "r", encoding="utf-8") as f: return f.read()
     return ""
 
 def save_memo(text):
-    with open(MEMO_FILE, "w", encoding="utf-8") as f: f.write(text)
+    actual_path = get_persistent_path(MEMO_FILE)
+    with open(actual_path, "w", encoding="utf-8") as f: f.write(text)
 
 def clear_memo():
-    if os.path.exists(MEMO_FILE): os.remove(MEMO_FILE)
+    actual_path = get_persistent_path(MEMO_FILE)
+    if os.path.exists(actual_path): os.remove(actual_path)
