@@ -1,5 +1,5 @@
 # ==========================================
-# FICHIER : app.py (V13.6 - RESTAURATION COMPLÈTE & OPTIMISÉE)
+# FICHIER : app.py (V13.6 - RESTAURATION COMPLÈTE & OPTIMISÉE POUR LE WEB)
 # ==========================================
 import streamlit as st
 import pandas as pd
@@ -16,11 +16,8 @@ import textwrap
 
 # --- 1. FONCTIONS SYSTÈME & LOGIQUE DE SAUVEGARDE ---
 def get_resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
+    # Sur Railway (Web), on utilise directement le chemin relatif
+    return relative_path
 
 def finaliser_session(duree, activite, commentaire):
     """Enregistre l'entrée et réinitialise le timer pour clore la journée."""
@@ -82,8 +79,10 @@ def pause_modal():
     if it:
         st.subheader(f"{it['icon']} {it['title']}")
         st.info(it['desc'])
-        p = get_resource_path(os.path.join("assets", "exercices", it["img"]))
-        if os.path.exists(p): st.image(p)
+        # Correction Web : on vérifie l'existence avec le chemin relatif
+        p = f"assets/exercices/{it['img']}"
+        if os.path.exists(p): 
+            st.image(p)
     if st.button("✅ VALIDER (+15 ⚡)", type="primary", use_container_width=True):
         st.session_state.game["vitality_ener"] += 15
         st.session_state.game["counters"]["pauses_clicked"] += 1
@@ -168,7 +167,6 @@ prime_active = st.session_state.game.get("theme_system_s_unlocked", False)
 prime_enabled = st.session_state.game.get("theme_prime_enabled", True)
 
 is_prime_activated = st.session_state.game.get("theme_system_s_unlocked", False)
-prime_enabled = st.session_state.game.get("theme_prime_enabled", True)
 
 if not is_prime_activated or not prime_enabled:
     st.markdown("""
@@ -673,7 +671,7 @@ with t2:
             
             save_game_data(st.session_state.game)
 
-           # --- RÉVÉLATION FINALE (CORRECTION DÉFINITIVE DU RENDU) ---
+            # --- RÉVÉLATION FINALE (CORRECTION DÉFINITIVE DU RENDU) ---
             import textwrap # S'assurer que l'import est présent en haut du fichier
             
             is_jackpot = g_e >= 100 or g_f > 0
