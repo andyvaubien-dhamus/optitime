@@ -3,8 +3,19 @@ import pandas as pd
 import os
 from .constants import DB_FILE, CSV_FILE_OLD
 
+# --- ADAPTATION WEB (RAILWAY) ---
+# On détecte si on est sur Railway (présence de la variable PORT ou RAILWAY_ENVIRONMENT)
+# Si oui, on force l'écriture dans le dossier "/app/data" qui sera monté en Volume persistant.
+# Sinon, on garde le DB_FILE local habituel.
+if os.environ.get("PORT") or os.environ.get("RAILWAY_ENVIRONMENT"):
+    # On s'assure que le dossier /app/data existe sur le conteneur Linux
+    os.makedirs("/app/data", exist_ok=True)
+    ACTUAL_DB_PATH = "/app/data/optitime.db"
+else:
+    ACTUAL_DB_PATH = DB_FILE
+
 def init_db():
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(ACTUAL_DB_PATH)
     cur = conn.cursor()
     cur.execute('''
         CREATE TABLE IF NOT EXISTS journal (
@@ -54,7 +65,7 @@ def init_db():
 
 def load_data_db():
     try:
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(ACTUAL_DB_PATH)
         df = pd.read_sql_query("SELECT * FROM journal ORDER BY date DESC, id DESC", conn)
         conn.close()
         if not df.empty:
@@ -71,7 +82,7 @@ def load_data_db():
         return pd.DataFrame(columns=['id', 'Date', 'Arrivée', 'Départ', 'Pause', 'Activité', 'Commentaire', 'Effectif_h', 'Solde_h'])
 
 def save_entry_db(entry):
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(ACTUAL_DB_PATH)
     cur = conn.cursor()
     d = entry['Date']
     if hasattr(d, 'strftime'): d = d.strftime("%Y-%m-%d")
@@ -87,14 +98,14 @@ def save_entry_db(entry):
     conn.close()
 
 def delete_entry_db(entry_id):
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(ACTUAL_DB_PATH)
     cur = conn.cursor()
     cur.execute("DELETE FROM journal WHERE id = ?", (entry_id,))
     conn.commit()
     conn.close()
 
 def update_db_from_df(df_to_save):
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(ACTUAL_DB_PATH)
     cur = conn.cursor()
     cur.execute("DELETE FROM journal")
     for _, row in df_to_save.iterrows():
