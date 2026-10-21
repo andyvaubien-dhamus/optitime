@@ -199,7 +199,19 @@ def get_daily_metrics(date_cible):
     return df_day['Effectif_h'].sum(), df_day['Pause'].sum()
 
 with st.sidebar:
-    st.title("⏱️ OptiTime V13.6")
+    # --- GESTION DU LOGO / ICÔNE ---
+    if os.path.exists("assets/logo.png"):
+        st.image("assets/logo.png", use_container_width=True)
+    elif os.path.exists("assets/icon.png"):
+        c1, c2 = st.columns([1, 4])
+        with c1:
+            st.image("assets/icon.png", width=40)
+        with c2:
+            st.title("OptiTime V13.6")
+    else:
+        st.title("⏱️ OptiTime V13.6")
+    # -------------------------------
+
     memo = load_memo()
     if memo:
         st.info(f"📩 **Note pour demain :**\n\n{memo}")
