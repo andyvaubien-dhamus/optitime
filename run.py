@@ -27,26 +27,34 @@ def open_app_window():
             webbrowser.open(url)
 
 if __name__ == "__main__":
+    # Détection de l'environnement Cloud (Railway attribue toujours une variable PORT)
+    is_cloud = os.environ.get("PORT") is not None
+
     # 1. Configuration CRITIQUE pour éviter le "RuntimeError"
     # Cela force Streamlit à comprendre qu'il tourne en mode serveur headless
     os.environ["STREAMLIT_SERVER_HEADLESS"] = "true"
     os.environ["STREAMLIT_GLOBAL_DEVELOPMENT_MODE"] = "false"
     
-    # 2. On lance le navigateur en fond
-    threading.Thread(target=open_app_window, daemon=True).start()
+    # 2. On lance le navigateur en fond UNIQUEMENT si on est en local
+    if not is_cloud:
+        threading.Thread(target=open_app_window, daemon=True).start()
     
     # 3. Chemin vers votre app
     # Attention: assurez-vous que "app.py" est bien le nom de votre script principal
     script_path = resolve_path("app.py") 
     
-    # 4. Configuration des arguments Streamlit
+    # 4. Configuration des arguments Streamlit adaptés pour le Local ET le Web
+    # Si on est sur le web, on récupère le port fourni par Railway, sinon 8501
+    port = os.environ.get("PORT", "8501")
+    
     sys.argv = [
         "streamlit",
         "run",
         script_path,
         "--global.developmentMode=false",
         "--server.headless=true",
-        "--server.port=8501",
+        f"--server.port={port}",
+        "--server.address=0.0.0.0", # Indispensable pour être accessible sur Internet
         "--theme.base=light"
     ]
     
